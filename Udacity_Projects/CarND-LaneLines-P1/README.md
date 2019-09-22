@@ -8,7 +8,7 @@ In this project, We have to use Python and OpenCV to find lane lines in the road
 
  
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image1.jpg)
+![](report_images/image1.jpg)
 
 **Fig1:** Original image
 
@@ -64,13 +64,11 @@ def filter_colors(image):
 
 ​    image2 = cv2.addWeighted(white_image, 1., yellow_image, 1., 0.)
 
- 
-
 ​    return image2
 
  
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image2.jpg)
+![](report_images/image2.jpg)
 
 **Fig2:** Filtered image
 
@@ -94,13 +92,11 @@ def grayscale():
 
 ​    return cv2.cvtColor(, cv2.COLOR_RGB2GRAY)
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image3.jpg)
+![](report_images/image3.jpg)
 
 **Fig3:** Grayscale image
 
- 
-
- 
+  
 
 **3.**     **Canny Edge Detection:**
 
@@ -114,11 +110,9 @@ def canny(, low_threshold, high_threshold):
 
 ​    return cv2.Canny(, low_threshold, high_threshold)
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image4.jpg)
+![](report_images/image4.jpg)
 
 **Fig4:** Edge Detection
-
- 
 
  
 
@@ -176,11 +170,11 @@ def region_of_interest(, vertices):
 
 ​    return masked_image
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image5.jpg)
+![](report_images/image5.jpg)
 
 **Fig5:** Region of Interest on the original image
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image6.jpg)
+![](report_images/image6.jpg)
 
 **Fig6:** Region of Interest selected on the edge image
 
@@ -222,7 +216,7 @@ def hough_lines(, rho, theta, threshold, min_line_len, max_line_gap, color=[0, 0
 
 a. The output of this is then passed to draw a red colored line on those output lines as below which is easy with the help of line API.
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image7.jpg)
+![](report_images/image7.jpg)
 
 **Fig7:** Lines drawn on a blank image
 
@@ -325,13 +319,11 @@ def draw_lines(, lines, color, thickness, extrapolate=False):
 
 ​                cv2.line(, (x1, y1), (x2, y2), color, thickness)
 
- 
-
-​    return 
+​     return 
 
  
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image8.jpg)
+![](report_images/image8.jpg)
 
 **Fig8:** Extrapolated lines
 
@@ -371,21 +363,17 @@ def weighted_img(, initial_img, α=0.8, β=1., γ=0.):
 
  
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image9.jpg)
+![](report_images/image9.jpg)
 
 **Fig9:** Combined image without extrapolation
 
  
 
-![](https://github.com/arunsuresh16/Projects/tree/master/Udacity_Projects/CarND-LaneLines-P1/report_images/image10.jpg)
+![](report_images/image10.jpg)
 
 **Fig10:** Combined image after extrapolation
 
- 
-
- 
-
- 
+  
 
 Now, that it is working for images, it should as well work fine with the video which is nothing but a series of images. Below is the code and parameters I chose to get this working. 
 
@@ -459,17 +447,13 @@ image_copy, 0.8, 1, 0)
 
 **NOTE:** Whenever the global variable - **g_extrapolate** is made equal to **True**, only then the extrapolation part of draw line will be activated
 
- 
-
- 
+  
 
 **Conclusion:**
 
 The project was successful in that the images clearly show the lane lines are detected properly and lines are very smoothly handled.
 
- 
-
-However, on the video stream, there are very minor glitches because of the averaging and needs improvement.
+ However, on the video stream, there are very minor glitches because of the averaging and needs improvement.
 
  
 
@@ -491,8 +475,8 @@ In order to understand the concepts better, I had a look at the following websit
 · [OpenCV      101: A Practical Guide to the Open Computer Vision Library](https://www.youtube.com/watch?v=jKtQxvzp1A0)
 · [Introduction to Computer Vision With OpenCV and      Python](https://dzone.com/articles/introduction-to-computer-vision-with-opencv-and-py)
 · [Finding Lane Lines on the Road, Getting started      with OpenCV](http://gear.github.io/2017-02-26-basic-lane-detection/)
-· [RANSAC Tutorial](http://www.math-info.univ-paris5.fr/~lomn/Cours/CV/SeqVideo/Material/RANSAC-tutorial.pdf)      
-· [RANSAC for Dummies](http://www.cs.tau.ac.il/~turkel/imagepapers/RANSAC4Dummies.pdf)      
+· [RANSAC Tutorial](http://www.math-info.univ-paris5.fr/~lomn/Cours/CV/SeqVideo/Material/RANSAC-tutorial.pdf) 
+· [RANSAC for Dummies](http://www.cs.tau.ac.il/~turkel/imagepapers/RANSAC4Dummies.pdf) 
 · [Lane detection and tracking using B-Snake](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.106.6644&rep=rep1&type=pdf)      
 
  
