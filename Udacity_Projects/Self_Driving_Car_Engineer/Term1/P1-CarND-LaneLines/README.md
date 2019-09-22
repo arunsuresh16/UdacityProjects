@@ -467,16 +467,18 @@ This project would work fine for straight lines, however when there are ups or w
 
 In order to understand the concepts better, I had a look at the following websites:
 
-· https://medium.com/@esmat.anis/robust-extrapolation-of-lines-in-video-using-linear-hough-transform-edd39d642ddf
-· https://peteris.rocks/blog/extrapolate-lines-with-numpy-polyfit/
-· https://github.com/naokishibuya/car-finding-lane-lines
-· https://github.com/fighting41love/Udacity_Lane_line_detection
-· [Finding Lane Lines on the Road](https://medium.com/@a.siddiqui/finding-lane-lines-on-the-road-dc5a2b2a31a4)
-· [OpenCV      101: A Practical Guide to the Open Computer Vision Library](https://www.youtube.com/watch?v=jKtQxvzp1A0)
-· [Introduction to Computer Vision With OpenCV and      Python](https://dzone.com/articles/introduction-to-computer-vision-with-opencv-and-py)
-· [Finding Lane Lines on the Road, Getting started      with OpenCV](http://gear.github.io/2017-02-26-basic-lane-detection/)
-· [RANSAC Tutorial](http://www.math-info.univ-paris5.fr/~lomn/Cours/CV/SeqVideo/Material/RANSAC-tutorial.pdf) 
-· [RANSAC for Dummies](http://www.cs.tau.ac.il/~turkel/imagepapers/RANSAC4Dummies.pdf) 
-· [Lane detection and tracking using B-Snake](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.106.6644&rep=rep1&type=pdf)      
+· https://medium.com/@esmat.anis/robust-extrapolation-of-lines-in-video-using-linear-hough-transform-edd39d642ddf  
+· https://peteris.rocks/blog/extrapolate-lines-with-numpy-polyfit/  
+· https://github.com/naokishibuya/car-finding-lane-lines  
+· https://github.com/fighting41love/Udacity_Lane_line_detection  
+· [Finding Lane Lines on the Road](https://medium.com/@a.siddiqui/finding-lane-lines-on-the-road-dc5a2b2a31a4)  
+· [OpenCV      101: A Practical Guide to the Open Computer Vision Library](https://www.youtube.com/watch?v=jKtQxvzp1A0)  
+· [Introduction to Computer Vision With OpenCV and      Python](https://dzone.com/articles/introduction-to-computer-vision-with-opencv-and-py)  
+· [Finding Lane Lines on the Road, Getting started      with OpenCV](http://gear.github.io/2017-02-26-basic-lane-detection/)  
+· [RANSAC Tutorial](http://www.math-info.univ-paris5.fr/~lomn/Cours/CV/SeqVideo/Material/RANSAC-tutorial.pdf)   
+· [RANSAC for Dummies](http://www.cs.tau.ac.il/~turkel/imagepapers/RANSAC4Dummies.pdf)  
+· [Lane detection and tracking using B-Snake](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.106.6644&rep=rep1&type=pdf)  
+
+
 
  
