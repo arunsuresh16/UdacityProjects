@@ -252,7 +252,11 @@ bool PurePursuit::verifyFollowing() const
 geometry_msgs::Twist PurePursuit::calcTwist(double curvature, double cmd_velocity) const
 {
   // verify whether vehicle is following the path
-  bool following_flag = verifyFollowing();
+  /* Harcoding the flag to false as the car is wandering a lot
+  and then losing the trajectory as its calculating the trajectory
+  only if it is not following the waypoints. Now it always
+  calculates the trajectory */
+  bool following_flag = false;//verifyFollowing();
   static double prev_angular_velocity = 0;
 
   geometry_msgs::Twist twist;
