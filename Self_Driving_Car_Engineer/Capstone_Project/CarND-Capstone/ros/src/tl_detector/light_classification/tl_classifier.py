@@ -1,12 +1,9 @@
 import os
-import cv2
 import numpy as np
 import rospy
 import tensorflow as tf
-import matplotlib.pyplot as plt
 from PIL import Image
 from PIL import ImageDraw
-from PIL import ImageColor
 from styx_msgs.msg import TrafficLight
 
 SAVE_DETECTED_IMAGES = 0
