@@ -96,7 +96,6 @@ class TLClassifier(object):
         return filtered_boxes, filtered_scores, filtered_classes
 
     def find_state_change_and_noise_filter(self, boxes, classes):
-        flag = False
         filtered_boxes = []
         new_classes = []
 
@@ -115,14 +114,13 @@ class TLClassifier(object):
                     filtered_boxes.append(boxes[i])
                     new_classes.append(classes[i])
                     self.prev_class_id = new_class_id
-                    flag = True
                     self.current_light = TRAFFICLIGHT_LIST[int(new_class_id) - 1]
 
-            if flag:
+            if len(new_classes) > 0:
                 color = COLOR_LIST[int(new_class_id)-1]
                 rospy.logwarn("{} light detected".format(color))
 
-        return flag, np.array(filtered_boxes), new_classes
+        return np.array(filtered_boxes), new_classes
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -148,9 +146,9 @@ class TLClassifier(object):
             final_boxes, final_scores, final_classes = self.filter_boxes(CONFIDENCE_CUTOFF, boxes, scores, classes)
 
             if len(final_boxes) > 0:
-                state, final_boxes, final_classes = self.find_state_change_and_noise_filter(final_boxes, final_classes)
+                final_boxes, final_classes = self.find_state_change_and_noise_filter(final_boxes, final_classes)
 
-                if SAVE_DETECTED_IMAGES and len(final_boxes) > 0:# and state is True:
+                if SAVE_DETECTED_IMAGES and len(final_boxes) > 0:
                     # Each class will be represented by a differently colored box
                     height, width, channels = image.shape
                     box_coords = self.to_image_coords(final_boxes, height, width)
