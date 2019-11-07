@@ -50,7 +50,6 @@ class TLClassifier(object):
         self.detection_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
         self.detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
 
-        self.light_state_changed = True
         self.prev_class_id = 0
         self.saved_image_count = 0
 
