@@ -14,6 +14,8 @@ import cv2
 import yaml
 
 STATE_COUNT_THRESHOLD = 3
+# Consider the image once in 3 images for processing
+IMAGE_CONSIDERATION_THRESHOLD = 3
 ENABLE_TESTING = 0
 
 class TLDetector(object):
@@ -44,11 +46,13 @@ class TLDetector(object):
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
+        self.image_threshold_count = 0
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
         self.waypoints_2d = None
         self.waypoints_tree = None
+        self.has_image = None
 
         if ENABLE_TESTING:
             # Need this to return the light state as is
@@ -111,9 +115,12 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
-        self.has_image = True
-        self.camera_image = msg
-        self.process_tl_and_publish()
+        self.image_threshold_count += 1
+        if self.image_threshold_count > IMAGE_CONSIDERATION_THRESHOLD:
+            self.image_threshold_count = 0
+            self.has_image = True
+            self.camera_image = msg
+            self.process_tl_and_publish()
         
 
     def get_closest_waypoint(self, x,y):
@@ -142,7 +149,6 @@ class TLDetector(object):
         """
         if self.use_traffic_light_classifier:
             if not self.has_image:
-                self.prev_light_loc = None
                 return False
 
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "rgb8")
