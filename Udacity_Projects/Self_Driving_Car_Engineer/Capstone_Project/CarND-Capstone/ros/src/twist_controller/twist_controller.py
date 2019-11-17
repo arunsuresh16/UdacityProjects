@@ -7,7 +7,7 @@ from lowpass import LowPassFilter
 GAS_DENSITY = 2.858
 ONE_MPH = 0.44704
 MIN_SPEED = 0.1
-MAX_THROTTLE_SPEED = 0.2
+MAX_THROTTLE_SPEED = 1.0
 
 class Controller(object):
     def __init__(self, vehicle_mass, fuel_cap, brake_deadband, decel_lmt,

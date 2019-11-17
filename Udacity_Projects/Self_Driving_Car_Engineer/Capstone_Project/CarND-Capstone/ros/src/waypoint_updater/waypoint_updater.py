@@ -29,10 +29,6 @@ class WaypointUpdater(object):
     def __init__(self):
         rospy.init_node('waypoint_updater')
 
-        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
-        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
-        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
-
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         self.pose = None
@@ -41,6 +37,10 @@ class WaypointUpdater(object):
         self.waypoints_tree = None
         self.stopline_wp_idx = -1
         self.base_lane = None
+
+        rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
+        rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
 
         self.loop()
 
@@ -69,18 +69,26 @@ class WaypointUpdater(object):
 
         if val > 0:
             closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
+        #rospy.loginfo("Closest idx: {0}".format(closest_idx))
 
         return closest_idx
 
     def publish_waypoints(self, closest_idx):
-        final_lane = self.generate_lane()
+        final_lane = self.generate_lane(closest_idx)
         self.final_waypoints_pub.publish(final_lane)
 
-    def generate_lane(self):
+    def generate_lane(self, closest_idx):
         lane = Lane()
-        closest_idx = self.get_closest_waypoint_idx()
-        farthest_idx = closest_idx + LOOKAHEAD_WPS
+        len_wp = len(self.base_waypoints.waypoints)
+        farthest_idx = min(closest_idx + LOOKAHEAD_WPS, len_wp-1)
         base_waypoints = self.base_waypoints.waypoints[closest_idx:farthest_idx]
+        # NOTE: since the velocity limit annotated on each waypoint is gradually
+        # decreasing when reaching the end of the waypoint list, the car will 
+        # actually decelerate and stop temporarily when we reach the end of the list
+        # then it will accelerate again as it begins to iterate on the list from the start
+        if farthest_idx - closest_idx < LOOKAHEAD_WPS:
+            farthest_idx = LOOKAHEAD_WPS - (farthest_idx - closest_idx)
+            base_waypoints += self.base_waypoints.waypoints[0:farthest_idx]
 
         if USE_TRAFFIC_LIGHT_DETECTION_INFO:
             # Return the base waypoints in case there is no light detected or
@@ -121,7 +129,7 @@ class WaypointUpdater(object):
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
-        rospy.logwarn('Received Base Waypoints')
+        rospy.logwarn("Received {0} Base Waypoints".format(len(waypoints.waypoints)))
         self.base_waypoints = waypoints  # Make a copy of the waypoints as its received only once
 
         if not self.waypoints_2d:
