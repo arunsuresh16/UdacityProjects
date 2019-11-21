@@ -40,6 +40,7 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
         self.light_classifier = TLClassifier()
+        #self.light_classifier = TLClassifier(rospy.get_param('~model_file'))
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -113,6 +114,7 @@ class TLDetector(object):
         self.has_image = True
         self.camera_image = msg
         self.process_tl_and_publish()
+        
 
     def get_closest_waypoint(self, x,y):
         """Identifies the closest path waypoint to the given position
