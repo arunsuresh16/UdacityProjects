@@ -1,1 +1,1 @@
-# This repository has all the Projects I have worked on.
+# This directory contains all the projects done in Udacity

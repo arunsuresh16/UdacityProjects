@@ -1,1 +1,0 @@
-# This directory contains all the projects done in Term 1 of Self Driving Car Engineer Nanodegree
