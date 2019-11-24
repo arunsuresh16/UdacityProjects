@@ -2,7 +2,7 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 
 [//]: # (Image References)
 [image1]: imgs/architecture.png
-
+![Test_track](videos/churchlot_track.gif)
 ## Team Information
 | Name                 | Email                       | Role   |
 |----------------------|-----------------------------|--------|
@@ -15,7 +15,7 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 ## System Architecture
 The system architecture of this project is provided by Udacity. It has three modules in total, Perception, Planning and Control. The following graph is the architecture diagram which includes different ROS Nodes and Topics. <br/>
 
-![alt text][image1]
+![Architecture][image1]
 
 ### Perception Subsystem
 We use Udacity's annotated driving datasets to retrain the SSD MobileNet by using Tensorflow object detection API.
