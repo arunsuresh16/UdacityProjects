@@ -1,5 +1,34 @@
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
+[//]: # (Image References)
+[image1]: imgs/architecture.png
+
+## Team Information
+| Name                 | Email                       | Role   |
+|----------------------|-----------------------------|--------|
+| Jiawen Zhu           | zackzhu1@gmail.com          | Team Lead |
+| Arun Suresh          | arunsuresh16@gmail.com      | Team Member 1 |
+| Vasileios Zempilis   | vasileios.zempilis@gmail.com| Team Member 2 |
+| Ashutosh Patel       | ashupatel10@gmail.com       | Team Member 3 |
+
+
+## System Architecture
+The system architecture of this project is provided by Udacity. It has three modules in total, Perception, Planning and Control. The following graph is the architecture diagram which includes different ROS Nodes and Topics. <br/>
+
+![alt text][image1]
+
+### Perception Subsystem
+We use Udacity's annotated driving datasets to retrain the SSD MobileNet by using Tensorflow object detection API.
+You can find more details [here](https://github.com/zackZhu1/Object-Detection) <br/>
+After creating the model, we upload it to our project and use it to identify the closest light ahead of the car.
+
+### Planning Subsystem
+Waypoints for the entire track are already loaded by `waypoint_loader` node. We use 50 waypoints in front of the current position of the vehicle and update velocity of each of them according to the position of the nearest traffic light in `waypoint_updater` node.
+ 
+### Control Subsystem
+We implemented the control logic in DBW node using PID controller, yaw controller and low pass filter. We tuned some parameters for the testing lot.
+
+
 Please use **one** of the two installation options, either native **or** docker installation.
 
 ### Native Installation
