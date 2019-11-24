@@ -19,7 +19,7 @@ The system architecture of this project is provided by Udacity. It has three mod
 
 ### Perception Subsystem
 We use Udacity's annotated driving datasets to retrain the SSD MobileNet by using Tensorflow object detection API.
-You can find more details [here](https://github.com/zackZhu1/Object-Detection) <br/>
+You can find more details [here](https://github.com/arunsuresh16/UdacityProjects/tree/master/Self_Driving_Car_Engineer/Capstone_Project/CarND-Capstone/Object-Detection) <br/>
 After creating the model, we upload it to our project and use it to identify the closest light ahead of the car.
 
 ### Planning Subsystem
