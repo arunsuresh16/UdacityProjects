@@ -1,25 +1,25 @@
 import os
-import cv2
 import numpy as np
 import rospy
 import tensorflow as tf
 from PIL import Image
 from PIL import ImageDraw
-from PIL import ImageColor
-
-import matplotlib.pyplot as plt
-
 from styx_msgs.msg import TrafficLight
+
+SAVE_DETECTED_IMAGES = 0
+CONFIDENCE_CUTOFF = 0.13
+COLOR_LIST = ['green', 'yellow', 'red']
+TRAFFICLIGHT_LIST = [TrafficLight.GREEN, TrafficLight.YELLOW, TrafficLight.RED]
+
 
 class TLClassifier(object):
     def __init__(self, model_file):
-        #TODO load classifier
         self.current_light = TrafficLight.UNKNOWN
-        self.enable_visualization = False
+
         #Get Current directory
         cwd = os.path.dirname(os.path.realpath(__file__))
         model_path = os.path.join(cwd, "train_model/{}".format(model_file))
-        #rospy.logwarn("model_path={}".format(model_path))
+        rospy.logdebug("model_path={}".format(model_path))
         
         # load inference graph
         self.detection_graph = tf.Graph()
@@ -29,9 +29,7 @@ class TLClassifier(object):
                 serialized_graph = fid.read()
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
-        
-        self.category_index = {1: {'id': 1, 'name': 'Green'}, 2: {'id': 2, 'name': 'Yellow'},
-                               3: {'id': 3, 'name': 'Red'}}
+
         #Configure TF session
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
@@ -44,14 +42,15 @@ class TLClassifier(object):
         
         # Each box represents a part of the image where a particular object was detected.
         self.detection_boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
-        # Each score represent how level of confidence for each of the objects.
+        # Each score represent the level of confidence for each of the objects.
         # Score is shown on the result image, together with the class label.
         self.detection_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
         self.detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
-        self.num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
-    
+
+        self.prev_class_id = 0
+        self.saved_image_count = 0
+
     def to_image_coords(self, boxes, height, width):
-        
         """
         The original box coordinate output is normalized, i.e [0, 1].
         
@@ -67,31 +66,26 @@ class TLClassifier(object):
         return box_coords
 
     def draw_boxes(self, image, boxes, classes, thickness=6):
-        
         """Draw bounding boxes on the image"""
-
         COLOR_LIST = ['green', 'yellow', 'red']
-
-	height, width, dim = image.shape
         image = Image.fromarray(image)
         draw = ImageDraw.Draw(image)
+        # rospy.logwarn("Found boxes {0}, classes {1} for count {2}".format(boxes, classes, self.saved_image_count))
 
         for i in range(len(boxes)):
-
             bot, left, top, right = boxes[i, ...]
-            class_id = int(classes[i]-1)
+            class_id = int(classes[i])-1
             color = COLOR_LIST[class_id]
             draw.line([(left, top), (left, bot), (right, bot), (right, top), (left, top)], width=thickness, fill=color)
-	image = np.array(image)
 
-	return image
-        
+        self.saved_image_count += 1
+        image_name = "images/saved_image_with_box" + str(self.saved_image_count) + ".jpg"
+        image.save(image_name)
+
     def filter_boxes(self, min_score, boxes, scores, classes):
-        
+        """Return boxes with a confidence >= `min_score`"""
         n = len(classes)
-        
         idxs = []
-        
         for i in range(n):
             if scores[i] >= min_score:
                 idxs.append(i)
@@ -99,8 +93,34 @@ class TLClassifier(object):
         filtered_boxes = boxes[idxs, ...]
         filtered_scores = scores[idxs, ...]
         filtered_classes = classes[idxs, ...]
-        
         return filtered_boxes, filtered_scores, filtered_classes
+
+    def find_state_change_and_noise_filter(self, boxes, classes):
+        filtered_boxes = []
+        new_classes = []
+
+        # class_count is defined as per COLOR_LIST. This is required to count
+        # which colored box has been detected more and then ignore the less dominant colored box.
+        class_count = [0, 0, 0]
+        for i in range(len(classes)):
+            class_count[int(classes[i]) - 1] += 1
+
+        # rospy.logwarn("Found classes {}".format(classes))
+        new_class_id = class_count.index(max(class_count)) + 1
+        # Detect only if there is a change in the state
+        if self.prev_class_id is not new_class_id:
+            for i in range(len(boxes)):
+                if (int(classes[i]) is new_class_id):
+                    filtered_boxes.append(boxes[i])
+                    new_classes.append(classes[i])
+                    self.prev_class_id = new_class_id
+                    self.current_light = TRAFFICLIGHT_LIST[int(new_class_id) - 1]
+
+            if len(new_classes) > 0:
+                color = COLOR_LIST[int(new_class_id)-1]
+                rospy.logwarn("{} light detected".format(color))
+
+        return np.array(filtered_boxes), new_classes
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -110,49 +130,28 @@ class TLClassifier(object):
 
         Returns:
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
-
         """
-        #image_np = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        
-        
         image_np = np.expand_dims(np.asarray(image, dtype=np.uint8), 0)
-        
-        with tf.Session(graph=self.detection_graph) as self.sess:                
+
+        with tf.Session(graph=self.detection_graph) as self.sess:
             # Actual detection.
-            (boxes, scores, classes) = self.sess.run([self.detection_boxes, self.detection_scores, self.detection_classes], 
-                                        feed_dict={self.image_tensor: image_np})
+            (boxes, scores, classes) = self.sess.run([self.detection_boxes, self.detection_scores, self.detection_classes],
+                                                     feed_dict={self.image_tensor: image_np})
 
             boxes = np.squeeze(boxes)
             scores = np.squeeze(scores)
             classes = np.squeeze(classes)
-            confidence_cutoff = 0.1
         
-            # Filter boxes with a confidence score less than `confidence_cutoff`
-            final_boxes, final_scores, final_classes = self.filter_boxes(confidence_cutoff, boxes, scores, classes)
-            #print(final_classes, final_scores)
-	    #print(final_classes.size)
+            # Filter boxes with a confidence score less than CONFIDENCE_CUTOFF
+            final_boxes, final_scores, final_classes = self.filter_boxes(CONFIDENCE_CUTOFF, boxes, scores, classes)
 
-            # Enable for Visualization
-	    if self.enable_visualization and len(final_boxes) > 0 :
-		width, height, channels = image.shape
-            	box_coords = self.to_image_coords(final_boxes, height, width)
-            	image = self.draw_boxes(image, box_coords, final_classes)
-	    	#plt.figure(figsize=(12, 8))
-            	#plt.imshow(image)
-            
-        
-        if final_classes.size != 0 and final_scores[0] is not None and final_scores[0] > confidence_cutoff:
-            class_name = self.category_index[final_classes[0]]['name']
-            #print((class_name, final_scores[0]))
-            #rospy.logwarn("final_class_prediction={}".format(final_classes[0]))
-            if final_classes[0] == 1:
-                return TrafficLight.GREEN
-            elif final_classes[0] == 2:
-                return TrafficLight.YELLOW
-            elif final_classes[0] == 3:
-                return TrafficLight.RED
-            
-        
-        return TrafficLight.UNKNOWN
+            if len(final_boxes) > 0:
+                final_boxes, final_classes = self.find_state_change_and_noise_filter(final_boxes, final_classes)
 
-    
+                if SAVE_DETECTED_IMAGES and len(final_boxes) > 0:
+                    # Each class will be represented by a differently colored box
+                    height, width, channels = image.shape
+                    box_coords = self.to_image_coords(final_boxes, height, width)
+                    self.draw_boxes(image, box_coords, final_classes)
+
+        return self.current_light
