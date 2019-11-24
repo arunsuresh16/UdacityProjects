@@ -18,7 +18,7 @@ activate tensorflow_cpu
 
 * install tensorflow CPU for python
 ```bash
-pip install --ignore-installed --upgrade tensorflow==1.12.0
+pip install --ignore-installed --upgrade tensorflow==1.3.0
 ```
 
 * install COCO API
@@ -26,7 +26,7 @@ pip install --ignore-installed --upgrade tensorflow==1.12.0
 git clone https://github.com/cocodataset/cocoapi.git
 cd cocoapi/PythonAPI
 make
-cp -r pycocotools <PATH_TO_TF>/TensorFlow/models/research/
+cp -r pycocotools <PATH_TO_TF>/TensorFlow/models/object_detection/
 ```
 
 * install pycocotools to site-packages and resolve the import error
@@ -37,12 +37,12 @@ python [PATH]/PythonAPI/setup.py build_ext install
 * install protobuf-compiler and run the compilation process 
 ```bash
 brew install protobuf
-protoc [PATH]/Tensorflow/models/research/object_detection/protos/*.proto --python_out=.
+protoc [PATH]/Tensorflow/models/object_detection/protos/*.proto --python_out=.
 ```
 
 * Add libraries to PYTHONPATH
 ```bash
-# From tensorflow/models/research/
+# From tensorflow/models/object_detection/
 export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 ```
 
@@ -53,9 +53,10 @@ conda install pillow, lxml, jupyter, matplotlib, opencv, cython
 ```
 * Creating a `TensorFlow` folder under the root directory of this repo. <br/>
   Then use Git to clone the [TensorFlow Models repo](https://github.com/tensorflow/models) inside `Tensorflow` folder
+* git checkout 289a2f99a7df528f6193a5ab3ee284ff3112b731
 * Adding necessary environment variables
 ```python
-# cd into TensorFlow/models/research directory
+# cd into TensorFlow/models/object_detection directory
 python [PATH]/setup.py build
 python [PATH]/setup.py install
 ```
@@ -90,14 +91,19 @@ Modify some variables as follows:
 ### Step7: Retrain the model
 Tensorflow Object Dectection API already has a script to train the model, we just need to run that python script and provide some parameters. <br/>
 ```bash
-python [PATH]/TensorFlow/models/research/object_detection/model_main.py --logtostderr --model_dir=[PATH]/Object-Detection/Training/ --pipeline_config_path=[PATH]/Object-Detection/Training/ssd_mobilenet_v1_coco.config 
+python [PATH]/TensorFlow/models/object_detection/train.py --logtostderr --pipeline_config_path=[PATH]/Object-Detection/Training/ssd_mobilenet_v1_coco.config --train_dir=Training/
 ```
-After finish retraining the model, new checkpoint files will be generated under Training directory.
+After finish retraining the model, new checkpoint files will be generated under Training directory. <br/>
+
+Similarly, you can evaluate the model using this command: <br/>
+```bash
+python [PATH]/TensorFlow/models/object_detection/eval.py --logtostderr --checkpoint_dir=Training/ --eval_dir=Training/Evaluation/
+```
 
 ### Step8: Export inference graph
 Choose the checkpoint file with largest index you generated in above step, and run this command:
 ```bash
-python [PATH]/Object-Detection/TensorFlow/models/research/object_detection/export_inference_graph.py --input_type image_tensor --pipeline_config_path [PATH]/Object-Detection/Training/ssd_mobilenet_v1_coco.config --trained_checkpoint_prefix [PATH]/Object-Detection/Training/model.ckpt-317(e.g 317 is the largest index) --output_directory [PATH]/Object-Detection/Training/inference_graph
+python [PATH]/Object-Detection/TensorFlow/models/object_detection/export_inference_graph.py --input_type image_tensor --pipeline_config_path Training/ssd_mobilenet_v1_coco.config --trained_checkpoint_prefix Training/model.ckpt-317(e.g 317 is the largest index) --output_directory Training/inference_graph
 ```
 Note: the checkpoint filename you provide should be something like this: model.ckpt-317, don't include the remaining suffix (e.g.  .data-00000-of-00001)
 After you run this command, an inference_graph folder will be generated under Training folder.
