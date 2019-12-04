@@ -1,6 +1,8 @@
 # CarND-Controls-PID
 Self-Driving Car Engineer Nanodegree Program
 
+![image](images/test_image.JPG)
+
 ---
 
 ## The PID Components
