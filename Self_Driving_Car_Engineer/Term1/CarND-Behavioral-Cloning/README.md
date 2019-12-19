@@ -287,7 +287,7 @@ My first step was to try the LeNet(http://yann.lecun.com/exdb/lenet/) model with
 
 The model architecture which was chosen is Nvidia Autonomous car Group’s architectural model and is shown in the below image:
 
-![Figure 4: CNN architecture. The network has about 27 million connections and 250 thousand parameters.](images\report_image1.jpg)
+![Figure 4: CNN architecture. The network has about 27 million connections and 250 thousand parameters.](images/report_image1.jpg)
 
 Taken from https://devblogs.nvidia.com/deep-learning-self-driving-cars/
 
@@ -295,11 +295,11 @@ The summary of the model which I used was explained earlier in the 1st point.
 
 #### 3.   Creation of the Training Set & Training Process
 
-To have more data, data was augmented/flipped, thus helping the car not to be left biased always. Below is an example image used to obtain a flipped image.![img](images\report_image2.jpg)
+To have more data, data was augmented/flipped, thus helping the car not to be left biased always. Below is an example image used to obtain a flipped image.![img](images/report_image2.jpg)
 
 Apart from flipping the image, the side images along with center images were used with a correction factor of 0.2. This along with augmenting, gave about 21432 samples.
 
-All these data was used for training the model with three epochs. The data was shuffled randomly. The following picture visualizes the mean squared error loss vs epoch for both training and validation set:![img](images\report_image3.jpg)
+All these data was used for training the model with three epochs. The data was shuffled randomly. The following picture visualizes the mean squared error loss vs epoch for both training and validation set:![img](images/report_image3.jpg)
 
 #### 4.   Code Explanation:
 
