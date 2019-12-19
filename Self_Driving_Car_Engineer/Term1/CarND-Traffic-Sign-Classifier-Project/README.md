@@ -74,7 +74,7 @@ Green – Validation dataset
 
  
 
-![img](images\image1.jpg)
+![img](images/image1.jpg)
 
  
 
