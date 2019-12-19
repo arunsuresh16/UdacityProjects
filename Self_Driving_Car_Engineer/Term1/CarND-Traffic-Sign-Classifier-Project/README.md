@@ -80,7 +80,7 @@ Green – Validation dataset
 
 Also with the help of pandas read_csv API, the signnames.csv file is read and then stored the SignName column from it to a list called sign_name_list. As the class Ids start from 0 to 42 in sequential order, the corresponding sign name can be accessed with sign_name_list[class_id]. Finally, random images from the training set are then considered and plotted with its sign name as its title.
 
-![img](images\image2.jpg)
+![img](images/image2.jpg)
 
  
 
@@ -92,7 +92,7 @@ Preprocessing are usually optional, but it effectively improves the performance.
 
  
 
-![img](images\image3.jpg)
+![img](images/image3.jpg)
 
 ##### **b.**   **Model Architecture:**
 
@@ -156,7 +156,7 @@ vi. The LeNet architecture is suitable for this operation as the accuracy obtain
 
 New German traffic signs were downloaded and then added to a directory named german_traffic_signs. These files are made sure to be 32x32x3 so that the code would run without any failures. The file names are renamed with the label in the front and then the sign name (ex: 14_stop.jpg). As per the project, only 5 of those files are considered, these files are then loaded and titled with the signname obtained from the csv file as below:
 
-![img](images\image4.jpg)
+![img](images/image4.jpg)
 
 ###### **ii. Predict the sign type from our model:**
 
